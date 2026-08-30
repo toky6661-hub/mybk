@@ -646,7 +646,8 @@ textarea {
 }
 
 /*====动态壁纸亮度====*/
-.page.video-mode::after {
+.page.video-mode,
+.page.background-image::after {
   content: '';
   position: fixed;
   inset: 0;
