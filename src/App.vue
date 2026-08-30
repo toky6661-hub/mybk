@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import wallpaperVideo from './assets/lemon.mp4';
+import defaultWallpaper from './assets/background.jpg'
 
 // 逻辑代码位置
 
@@ -89,8 +90,15 @@ const wallpaperMode = ref< 'video' | 'image' >(
 );
 
 //当前的静态壁纸
+/*const storeBg = localStorage.getItem('background');
 const background = ref(
-  localStorage.getItem('background') || ''
+  storeBg && storeBg !== 'null' && storeBg !== ''
+  ? storeBg
+  :defaultWallpaper
+)*/
+
+const background = ref(
+  localStorage.getItem('background') || defaultWallpaper
 );
 
 //控制壁纸面板，比如亮度滑块
@@ -129,21 +137,12 @@ const changeBackground = (e: Event) => {
   const reader = new FileReader();
 
   reader.onload = () => {
-    background.value = reader.result as string;
-
-    localStorage.setItem(
-      'background',
-      background.value
-    );
-
-    wallpaperMode.value = 'image';
-
-    localStorage.setItem(
-      'wallpaperMode',
-      'image'
-    );
+     const result = reader.result as string;
+      background.value = result;
+      localStorage.setItem('background', result);
+      wallpaperMode.value = 'image';
+      localStorage.setItem('wallpaperMode', 'image');
   };
-
     reader.readAsDataURL(file);
 };
 
@@ -234,6 +233,7 @@ const setonlineBackground = () => {
     <div 
       v-if="wallpaperMode === 'image' && background"
       class="background-image"
+      :style="{ backgroundImage: `url('${background}')`}"
     >
       <!--测试-->
     </div>
@@ -596,7 +596,7 @@ textarea {
 }
 
 /*=====静态壁纸层===== */
-    &::before {
+/*    &::before {
     content: '';
     position: fixed;
     inset: 0;
@@ -607,7 +607,7 @@ textarea {
 
     pointer-events: none;
     z-index: -1;
-  }
+  }*/
   /*======静态模式(仅显示静态壁纸)======*/
   .page.image-mode::before{
     background-image: 
