@@ -1,9 +1,8 @@
 <!--主要负责骨架-->
+// 逻辑代码位置
 <script setup lang="ts">
 import { ref } from 'vue';
 import wallpaperVideo from './assets/lemon.mp4';
-
-// 逻辑代码位置
 
 const showAddWebsite = ref(false);
 
@@ -1049,5 +1048,188 @@ textarea {
   position: fixed;
   inset: 0;
   z-index: 1002;
+}
+
+/*===========================
+    响应式适配：
+    桌面端：默认
+    平板：760px - 1023px
+    手机：767px以下
+===========================*/
+
+/*======平板=======*/
+@media (max-width: 1023px){
+  .sidebar {
+    width: 200px;
+    padding: 25px 16px;
+  }
+
+  .search-container {
+    width: calc(100% - 40px);
+    max-width: 700px;
+  }
+
+  .online-bg-input {
+    width: 260px;
+  }
+
+  .add-website-dialog {
+    width: 380px;
+    max-width: calc(100vw - 32px);
+  }
+
+}
+
+/*======手机=======*/
+@media (max-width: 767px) {
+  /*----页面----*/
+  .page {
+    min-width: 100vh;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  /*-----壁纸------*/
+  .background-video,
+  .background-image {
+    width: 100vw;
+    height: 100vh;
+  }
+
+  /*---------左侧导航---------*/
+  .sidebar {
+    width: min(240px, 82vw);
+    height: 100vh;
+    box-sizing: border-box;
+
+    padding: 
+      calc(24px + env(safe-area-inset-top))
+      16px
+      calc(24px + env(safe-area-inset-bottom));
+
+      overflow-x: hidden;
+      overflow-y: auto;
+  }
+  .sidebar-trigger {
+    width: 24px;
+  }
+
+  /*---------搜索区域---------*/
+  .search-container {
+    width: calc(100% - 32px);
+    max-width: none;
+    gap: 18px;
+
+    padding-left: 16px;
+    padding-right: 16px;
+
+    box-sizing: border-box;
+  }
+
+  .search-box {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .change-bg-panel {
+    flex-shrink: 0;
+  }
+
+  .change-bg {
+    padding: 9px 12px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  /*-----------壁纸设置面板------------*/
+  .online-bg-input {
+    position: fixed;
+    top: auto;
+    right: 50%;
+
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    transform: translateX(50%);
+
+    width: calc(100vw - 32px);
+    max-width: 360px;
+
+    box-sizing: border-box;
+    max-height: calc(100vh - 32px);
+
+    overflow-y: auto;
+
+    z-index: 1003;
+  }
+
+  .online-bg-input input[types='url'] {
+    font-size: 16px;
+  }
+
+  .brightness-control {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .brightness-control input[types='range'] {
+    width: 100%;
+  }
+
+  /*-----------添加网站弹窗------------*/
+  .add-website-dialog {
+    width: calc(100vw - 32px);
+    max-width: none;
+
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+
+    padding: 22px 18px;
+    border-radius: 16px;
+  }
+
+  .add-website-actions {
+    flex-direction: column;
+  }
+
+  .add-website-actions button {
+    width: 100%;
+    height: 46px;
+    font-size: 18px;
+  }
+
+  /*----------九宫格----------*/
+  .nine-dots {
+    top: calc(14px + env(safe-area-inset-top));
+    left: calc(14px + env(safe-area-inset-left));
+  }
+
+} 
+
+/*---------最小的手机----------*/
+@media (max-width: 380px) {
+  .search-container {
+    width: calc(100% - 20px);
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .change-bg {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .online-bg-input {
+    width: calc(100vw - 20px);
+  }
+
+  .sidebar-item {
+    width: 48px;
+    height: 48px;
+  }
+
+  .sidebar-item img {
+    width: 26px;
+    height: 26px;
+  }
 }
 </style>
