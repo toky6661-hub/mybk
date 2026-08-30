@@ -1206,7 +1206,7 @@ textarea {
 } 
 
 /*---------最小的手机----------*/
-@media (max-width: 380px) {
+/*@media (max-width: 380px) {
   .search-container {
     width: calc(100% - 20px);
     padding-left: 10px;
@@ -1231,5 +1231,5 @@ textarea {
     width: 26px;
     height: 26px;
   }
-}
+}*/
 </style>
