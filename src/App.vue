@@ -2,7 +2,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import wallpaperVideo from './assets/lemon.mp4';
-import defaultWallpaper from './assets/background.jpg';
 
 // 逻辑代码位置
 
@@ -91,7 +90,7 @@ const wallpaperMode = ref< 'video' | 'image' >(
 
 //当前的静态壁纸
 const background = ref(
-  localStorage.getItem('background') || defaultWallpaper
+  localStorage.getItem('background') || ''
 );
 
 //控制壁纸面板，比如亮度滑块
@@ -233,9 +232,8 @@ const setonlineBackground = () => {
 
     <!--静态背景层（测试-->
     <div 
-      v-if="wallpaperMode === 'image'"
+      v-if="wallpaperMode === 'image' && background"
       class="background-image"
-      :style="{ backgroundImage: `url(' + background + ')` }"
     >
       <!--测试-->
     </div>
@@ -597,8 +595,8 @@ textarea {
   -webkit-user-select: text;
 }
 
-   /*=====静态壁纸层=====（似乎多做了一层静态，先测试注释掉 */
-   /* &::before {
+/*=====静态壁纸层===== */
+    &::before {
     content: '';
     position: fixed;
     inset: 0;
@@ -611,27 +609,27 @@ textarea {
     z-index: -1;
   }
   /*======静态模式(仅显示静态壁纸)======*/
-  /*.page.image-mode::before{
+  .page.image-mode::before{
     background-image: 
     linear-gradient(
       rgba(0, 0, 0, 0.60),
       rgba(0, 0, 0, 0.60)), 
     v-bind(background);
-  }*/
+  }
 
-/*  .background-video,
-    .background-image {
-      position: fixed;
-      inset: 0;
+.background-video,
+.background-image {
+  position: fixed;
+  inset: 0;
 
-      width: 100%;
-      height: 100%;
+  width: 100%;
+  height: 100%;
 
-      object-fit: cover;
+  object-fit: cover;
 
-      z-index: -2;
-      pointer-events: none;
-}（重复*/
+  z-index: -2;
+  pointer-events: none;
+}
 
 .background-video {
   position: fixed;
@@ -641,7 +639,7 @@ textarea {
   width: 100%;
   height: 100%;
 
-  z-index: 0;
+  z-index: -2;
   pointer-events: none;
 }
 
@@ -658,9 +656,6 @@ textarea {
 }
 
 .background-image {
-  position: fixed;
-  inset: 0;
-
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -670,8 +665,6 @@ textarea {
     rgba(0, 0, 0, 0.45),
     rgba(0, 0, 0, 0.2)),
     v-bind(background);
-
-  z-index: 0;
 }
 
 .main {
