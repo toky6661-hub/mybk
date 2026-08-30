@@ -6,16 +6,16 @@ import  Clock  from '../components/Clock.vue';
 import { ref } from 'vue';
 
 //当前选择的搜索引擎，只能是 'baidu'、'google' 或 'bing'
-const currentEngine = ref<'baidu' | 'google' | 'bing'>('baidu');
+const currentEngine = ref<'baidu' | 'google' | 'bing'>('bing');
 
 //搜素框里的内容
 const searchQuery = ref('');
 
 //每个搜索引擎的搜索 URL
 const searchUrls = {
-  baidu: 'https://www.baidu.com/s?wd=',
-  google: 'https://www.google.com/search?q=',
-  bing: 'https://www.bing.com/search?q=',
+    bing: 'https://www.bing.com/search?q=',
+    baidu: 'https://www.baidu.com/s?wd=',
+    google: 'https://www.google.com/search?q=',
 };
 
 function handleSearch() {
@@ -48,6 +48,17 @@ function handleSearch() {
     
     <div class="engine">
         <div class="engine-pills">
+
+    <button 
+        type="button"
+        :class="{
+          'active': currentEngine === 'bing',
+        }"
+        @click="currentEngine = 'bing'"
+    >
+    必应
+    </button>
+
     <button 
         type="button"
         :class="{
@@ -68,15 +79,6 @@ function handleSearch() {
     谷歌
     </button>
 
-    <button 
-        type="button"
-        :class="{
-          'active': currentEngine === 'bing',
-        }"
-        @click="currentEngine = 'bing'"
-    >
-    必应
-    </button>
 </div>
 
     <!--搜素表单，阻止提交刷新，改为自己处理跳转-->
