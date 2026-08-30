@@ -154,6 +154,7 @@ const setonlineBackground = () => {
 
   if(!url) return;
 
+  /*background.value = url;*/
   background.value = `url("${url}")`;
 
   localStorage.setItem(
@@ -235,7 +236,7 @@ const setonlineBackground = () => {
     <div 
       v-if="wallpaperMode === 'image' && background"
       class="background-image"
-      :style="{ backgroundImage: `url('${background}')`}"
+      :style="{ backgroundImage: `url('${(background)}')`}"
     >
       <!--测试-->
     </div>
@@ -611,13 +612,13 @@ textarea {
     z-index: -1;
   }*/
   /*======静态模式(仅显示静态壁纸)======*/
-  .page.image-mode::before{
+ /*.page.image-mode::before{
     background-image: 
     linear-gradient(
       rgba(0, 0, 0, 0.60),
       rgba(0, 0, 0, 0.60)), 
     v-bind(background);
-  }
+  }*/
 
 .background-video,
 .background-image {
@@ -638,15 +639,18 @@ textarea {
   inset: 0;
 
   object-fit: cover;
+
   width: 100%;
   height: 100%;
 
   z-index: -2;
   pointer-events: none;
+
+  filter: brightness(calc(1 - var(--wallpaper-brightness)));
 }
 
 /*====动态壁纸亮度====*/
-.page.video-mode::after {
+.page::after {
   content: '';
   position: fixed;
   inset: 0;
@@ -658,15 +662,26 @@ textarea {
 }
 
 .background-image {
+  position: fixed;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
 
-  background-image: 
+ /* background-image: 
   linear-gradient(
     rgba(0, 0, 0, 0.45),
     rgba(0, 0, 0, 0.2)),
-    v-bind(background);
+    v-bind(background);*/
+
+  z-index: -2;
+  pointer-events: none;
+
+  filter: brightness(calc(1 - var(--wallpaper-brightness)));
 }
 
 .main {
