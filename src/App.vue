@@ -2,11 +2,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import wallpaperVideo from './assets/lemon.mp4';
-import defaultWallpaper from './assets/background.jpg'
 
 // 逻辑代码位置
 
 const showAddWebsite = ref(false);
+
+// 用这个替换掉 import
+const defaultWallpaper = 'https://picsum.photos/1920/1080';
 
 const newName = ref('');
 const newUrl = ref('');
