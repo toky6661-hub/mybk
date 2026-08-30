@@ -43,19 +43,37 @@ function getProverb() {
 
 async function getNetWorkProverbs() {
   try {
-    const response = await fetch('https://v1.hitokoto.cn/');
+    const response = await fetch('https://v1.hitokoto.cn/',
+      { cache: 'no-store' }
+    );
+    /*const data = await response.json();
+    proverbText.value = data.hitokoto || '暂无名言';*/
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
     const data = await response.json();
-    proverbText.value = data.hitokoto || '暂无名言';
+
+    if (data.hitokoto) {
+      proverbText.value = data.hitokoto;
+      return;
+    }
+
   }
   catch(error) {
     console.error('Fetch proverb failed', error);
-    proverbText.value = '暂无名言';
+    /*proverbText.value = '暂无名言';*/
+
+    //网络请求失败，使用本地谚语
+    proverbText.value = getProverb();
   }
 }
 
 onMounted(async() => {
   updateTime();
-  proverbText.value = getProverb();
+
+  /*proverbText.value = getProverb();*/
   await getNetWorkProverbs();
 
   timer = setInterval(updateTime, 1000);
