@@ -976,7 +976,7 @@ textarea {
 }
 
  .change-bg-panel {
-  position: relative;
+  position: fixed;
   z-index: 1001;
   pointer-events: auto;
 }
