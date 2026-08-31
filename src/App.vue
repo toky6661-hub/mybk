@@ -7,7 +7,8 @@ import wallpaperVideo from './assets/lemon.mp4';
 const showAddWebsite = ref(false);
 
 // 用这个替换掉 import
-const defaultWallpaper = 'https://picsum.photos/1920/1080';
+const defaultWallpaper =
+  'https://cdnstatic.tencentcs.com/edgeone/pages/product-activities/zhongyuanji/media/heritage-bg.jpg';
 
 const newName = ref('');
 const newUrl = ref('');
@@ -98,8 +99,12 @@ const background = ref(
   :defaultWallpaper
 )*/
 
+const savedBackground = localStorage.getItem('background');
+
 const background = ref(
-  localStorage.getItem('background') || defaultWallpaper
+  savedBackground && savedBackground !== 'null'
+    ? savedBackground
+    : defaultWallpaper
 );
 
 //控制壁纸面板，比如亮度滑块
@@ -139,6 +144,7 @@ const changeBackground = (e: Event) => {
 
   reader.onload = () => {
      const result = reader.result as string;
+     
       background.value = result;
       localStorage.setItem('background', result);
       wallpaperMode.value = 'image';
@@ -153,12 +159,12 @@ const setonlineBackground = () => {
 
   if(!url) return;
 
-  /*background.value = url;*/
-  background.value = `url("${url}")`;
+  background.value = url;
+  /*background.value = `url("${url}")`;*/
 
   localStorage.setItem(
     'background',
-    background.value
+    url
   );
 
   wallpaperMode.value = 'image';
@@ -228,14 +234,14 @@ const setonlineBackground = () => {
       loop
       playsinline
     >
-      <source :src="wallpaperVideo" type="video.mp4" />
+    
     </video>
 
     <!--静态背景层（测试-->
     <div 
       v-if="wallpaperMode === 'image' && background"
       class="background-image"
-      :style="{ backgroundImage: `url('${(background)}')`}"
+      :style="{ backgroundImage: `url(${JSON.stringify(background)})`}"
     >
       <!--测试-->
     </div>
@@ -583,7 +589,13 @@ const setonlineBackground = () => {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
-  position: relative;
+  position: fixed;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 
   user-select: none;
   -webkit-user-select: none;
@@ -651,6 +663,7 @@ textarea {
 /*====动态壁纸亮度====*/
 .page::after {
   content: '';
+
   position: fixed;
   inset: 0;
 
@@ -976,7 +989,7 @@ textarea {
 }
 
  .change-bg-panel {
-  position: fixed;
+  position: relative;
   z-index: 1001;
   pointer-events: auto;
 }
@@ -1065,9 +1078,7 @@ textarea {
   }
 
   .search-container {
-    width: calc(100vw - 40px);
-    width: calc(100dvw - 40px);
-    
+    width: calc(100% - 40px);
     max-width: 700px;
   }
 
@@ -1097,8 +1108,10 @@ textarea {
   /*-----壁纸------*/
   .background-video,
   .background-image {
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
+
+    inset: 0;
 
     top: 0;
     left: 0;
@@ -1109,6 +1122,14 @@ textarea {
     min-width: 0;
 
     object-fit: cover;
+
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    pointer-events: none;
+
+    z-index: -2;
   }
 
   /*---------左侧导航---------*/
