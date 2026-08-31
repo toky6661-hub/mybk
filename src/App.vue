@@ -1065,7 +1065,9 @@ textarea {
   }
 
   .search-container {
-    width: calc(100% - 40px);
+    width: calc(100vw - 40px);
+    width: calc(100dvw - 40px);
+    
     max-width: 700px;
   }
 
@@ -1084,8 +1086,11 @@ textarea {
 @media (max-width: 767px) {
   /*----页面----*/
   .page {
-    min-width: 100vh;
+    min-width: 0;
+    min-height: 0;
+
     width: 100%;
+    height: 100vh;
     overflow: hidden;
   }
 
@@ -1094,6 +1099,16 @@ textarea {
   .background-image {
     width: 100vw;
     height: 100vh;
+
+    top: 0;
+    left: 0;
+
+    position: fixed;
+
+    min-height: 0;
+    min-width: 0;
+
+    object-fit: cover;
   }
 
   /*---------左侧导航---------*/
@@ -1105,18 +1120,25 @@ textarea {
     padding: 
       calc(24px + env(safe-area-inset-top))
       16px
-      calc(24px + env(safe-area-inset-bottom));
+      calc(24px + env(safe-area-inset-bottom))
+      16px
+      ;
 
       overflow-x: hidden;
       overflow-y: auto;
+
+      overscroll-behavior: contain;
   }
   .sidebar-trigger {
     width: 24px;
+    height: 100dvh;
   }
 
   /*---------搜索区域---------*/
   .search-container {
-    width: calc(100% - 32px);
+    width: calc(100vw - 32px);
+    width: calc(100dvw - 32px);
+
     max-width: none;
     gap: 18px;
 
@@ -1129,6 +1151,8 @@ textarea {
   .search-box {
     min-width: 0;
     width: 100%;
+
+    flex: 1;
   }
 
   .change-bg-panel {
@@ -1144,10 +1168,13 @@ textarea {
   /*-----------壁纸设置面板------------*/
   .online-bg-input {
     position: fixed;
+
     top: auto;
     right: 50%;
 
-    bottom: calc(16px + env(safe-area-inset-bottom));
+    bottom: 
+      calc(16px + env(safe-area-inset-bottom));
+
     transform: translateX(50%);
 
     width: calc(100vw - 32px);
@@ -1157,11 +1184,12 @@ textarea {
     max-height: calc(100vh - 32px);
 
     overflow-y: auto;
+    overflow-x: hidden;
 
     z-index: 1003;
   }
 
-  .online-bg-input input[types='url'] {
+  .online-bg-input input[type='url'] {
     font-size: 16px;
   }
 
@@ -1171,17 +1199,20 @@ textarea {
     gap: 8px;
   }
 
-  .brightness-control input[types='range'] {
+  .brightness-control input[type='range'] {
     width: 100%;
   }
 
   /*-----------添加网站弹窗------------*/
   .add-website-dialog {
     width: calc(100vw - 32px);
+    width: calc(100dvw - 32px);
+
     max-width: none;
 
     max-height: calc(100vh - 32px);
     overflow-y: auto;
+    overflow-x: hidden;
 
     padding: 22px 18px;
     border-radius: 16px;
@@ -1199,18 +1230,24 @@ textarea {
 
   /*----------九宫格----------*/
   .nine-dots {
-    top: calc(14px + env(safe-area-inset-top));
-    left: calc(14px + env(safe-area-inset-left));
+    top:
+     calc(14px + env(safe-area-inset-top));
+    left:
+     calc(14px + env(safe-area-inset-left));
   }
 
 } 
 
 /*---------最小的手机----------*/
-/*@media (max-width: 380px) {
+@media (max-width: 380px) {
   .search-container {
-    width: calc(100% - 20px);
+    width: calc(100vw - 20px);
+    width: calc(100dvw - 20px);
+
     padding-left: 10px;
     padding-right: 10px;
+
+    gap: 6px;
   }
 
   .change-bg {
@@ -1220,6 +1257,7 @@ textarea {
 
   .online-bg-input {
     width: calc(100vw - 20px);
+    width: calc(100dvw - 20px);
   }
 
   .sidebar-item {
@@ -1231,5 +1269,5 @@ textarea {
     width: 26px;
     height: 26px;
   }
-}*/
+}
 </style>
