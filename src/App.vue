@@ -1,10 +1,18 @@
 <!--主要负责骨架-->
 // 逻辑代码位置
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import wallpaperVideo from './assets/lemon.mp4';
 
 const showAddWebsite = ref(false);
+
+//九宫格导航
+const showNineDots = ref(false);
+
+//点击九宫格导航按钮
+const toggleNineDots = () => {
+  showNineDots.value = !showNineDots.value;
+};
 
 // 用这个替换掉 import
 const defaultWallpaper =
@@ -12,6 +20,12 @@ const defaultWallpaper =
 
 const newName = ref('');
 const newUrl = ref('');
+
+//打开添加网站弹窗
+const openAddWebsite = () => {
+  showAddWebsite.value = true;
+  showNineDots.value = false; // 打开添加网站弹窗时，关闭九宫格导航
+};
 
 const sidebarGroups = ref(JSON.parse(
   localStorage.getItem('sidebarGroups') ||
@@ -33,29 +47,22 @@ const sidebarGroups = ref(JSON.parse(
 ])
 ))
 
-//打开弹窗
-const openAddWebsite = () => {
-  showAddWebsite.value = true;
+// 九宫格导航使用所有分组中的网站链接
+const sidebarLinks = computed(() =>
+  sidebarGroups.value.flatMap((group: { links?: { name: string; url: string }[] }) =>
+    group.links || []
+  )
+);
 
-  newName.value = '';
-  newUrl.value = '';
-}
-
-const iconFailed = ref< Record< string, boolean >>({});
-
+// 获取网站图标
 const getFavicon = (url: string) => {
   try {
-    const domain = new URL(url).hostname;
-
-    return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+    const hostname = new URL(url).hostname;
+    return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(hostname)}&sz=64`;
   } catch {
     return '';
   }
 };
-
-const handleIconError = (url: string) => {
-  iconFailed.value[url] = true;
-}
 
 //添加网站
 const addWebsite = () => {
@@ -77,6 +84,7 @@ const addWebsite = () => {
 )
 
   closeAddWebsite();
+  showNineDots.value = true;
   
 }
 
@@ -246,7 +254,7 @@ const setonlineBackground = () => {
       <!--测试-->
     </div>
 
-    <div class="sidebar-trigger"></div>
+    <!--<div class="sidebar-trigger"></div>
     <div class="sidebar-hint"></div>
 
       <aside class="sidebar">
@@ -277,9 +285,9 @@ const setonlineBackground = () => {
             {{ link.name }}
           </span>
         </a>
-        </div>
+        </div>-->
 
-    <!--添加网站的按钮-->
+    <!--添加网站的按钮
         <button
           class="add-website-btn"
           @click="openAddWebsite"
@@ -287,7 +295,8 @@ const setonlineBackground = () => {
         + 添加
         </button>
 
-      </aside>
+    </aside>-->
+
       <!--添加网站时弹出的面板-->
         <div v-if="showAddWebsite" class="dialog-mask" @click="closeAddWebsite">
           <!--div遮罩-->
@@ -440,8 +449,74 @@ const setonlineBackground = () => {
 
 </div>
 
-<div class="nine-dots">
+<!--
+<div class="nine-dots" @click="toggleNineDots">
   <i v-for="i in 9" :key="i"></i>
+</div>-->
+
+<!--九宫格导航-->
+<div class="nine-menu-wrapper">
+
+  <!--九宫格按钮-->
+  <button 
+    class="nine-dots" 
+    type="button"
+    aria-label="打开导航"
+    @click="toggleNineDots">
+    <i v-for="i in 9" :key="i"></i>
+  </button>
+
+  <!--z-Index遮罩层，点击后关闭九宫格导航-->
+  <div v-if="showNineDots" class="nine-menu-mask" @click="toggleNineDots">
+  </div>
+
+  <!-- 导航弹窗 -->
+  <div
+    v-if="showNineDots"
+    class="nine-popup"
+  >
+
+    <div class="nine-popup-title">
+      快速导航
+    </div>
+
+    <div class="nine-popup-grid">
+
+      <a
+        v-for="link in sidebarLinks"
+        :key="link.url"
+        class="nine-popup-item"
+        :href="link.url"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+
+        <img
+          :src="getFavicon(link.url)"
+          :alt="link.name"
+        >
+
+        <span>
+          {{ link.name }}
+        </span>
+
+      </a>
+
+      <!-- 添加网站 -->
+      <button
+        class="nine-popup-item add-nine-item"
+        type="button"
+        @click="openAddWebsite"
+      >
+        <strong>+</strong>
+        <span>添加网站</span>
+      </button>
+
+
+
+</div>
+
+  </div>
 </div>
 
     <router-view />
@@ -450,7 +525,7 @@ const setonlineBackground = () => {
 </template>
 
 <style lang="scss" scoped>
-.sidebar-trigger {
+/*.sidebar-trigger {
   position: fixed;
   top: 0;
   left: 0;
@@ -583,7 +658,7 @@ const setonlineBackground = () => {
 .sidebar-group > .sidebar-item {
   display: inline-flex;
   margin: 5px;
-}
+}*/
 
 .page {
   display: flex;
@@ -968,6 +1043,26 @@ textarea {
   pointer-events: auto;
 }
 
+/*九宫格导航*/
+
+.nine-menu-wrapper {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+
+  z-index: 10000;
+
+  box-shadow:none;
+  border:none;
+
+  padding:0;
+  margin:0;
+
+  width: 35px;
+  height: 20px;
+}
+
+/*九宫格按钮*/
 .nine-dots {
   position: fixed;
   top: 20px;
@@ -979,14 +1074,155 @@ textarea {
   grid-template-rows: repeat(3, 6px);
   gap: 6px;
   z-index: 100;
+
+  background-color: transparent;
+  background:transparent;
+
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 0px;
+  border-width: 0px;
+
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  color: transparent;
+
+  padding: 0;
+  margin: 0;
+
+  cursor: pointer;
+  outline: none;
+
+  transition: 
+    background-color 0.2s ease,
+    transform 0.2s ease
+  ;
+}
+
+.nine-dots:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+  transform: scale(1.08);
+
+  border:none;
+  background:transparent;
+}
+
+.add-website-actions button {
+  width: 150px;
+  height: 50px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  font-size: 24px;
+  transition: 0.2s;
+  letter-spacing: 1px;
+}
+
+.nine-dots:active {
+  background-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px) scale(0.95);
 }
 
 .nine-dots i {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.95);
+
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.35);
+
+  pointer-events: none;
 }
+
+.nine-dots:focus,
+.nine-dots:focus-visible,
+.add-website-actions {
+  outline: none;
+  box-shadow: none;
+  border: none;
+  background: transparent;
+}
+
+/**点击后出现的网站面板 */
+.nine-menu-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(1px);
+}
+
+/**网站菜单 */
+.nine-menu {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 400px;
+  max-width: calc(100vw - 32px);
+  padding: 28px;
+  box-sizing: border-box;
+
+  border-radius: 20px;
+  background-color: rgba(14, 18, 40, 0.92);
+  backdrop-filter: blur(20px);
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+
+  z-index: 1001;
+}
+
+@keyframes nineMenuShow {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/*九宫格入口，只显示九个点，不显示按钮背景
+.nine-menu-warpper {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 10000;
+}*/
+
+/**九个点本体 
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  grid-template-columns: repeat(3, 6px);
+  grid-template-rows: repeat(3, 6px);
+  gap: 6px;
+
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease
+    ;
+}*/
 
  .change-bg-panel {
   position: relative;
@@ -1071,7 +1307,7 @@ textarea {
 ===========================*/
 
 /*======平板=======*/
-@media (max-width: 1023px){
+@media (min-width: 768px) and (max-width: 1023px) {
   .sidebar {
     width: 200px;
     padding: 25px 16px;
@@ -1091,6 +1327,15 @@ textarea {
     max-width: calc(100vw - 32px);
   }
 
+  .nine-dots {
+    top: 20px;
+    left: 20px;
+  }
+
+  .nine-popup {
+    width: 380px;
+    max-width: calc(100vw - 32px);
+  }
 }
 
 /*======手机=======*/
@@ -1103,6 +1348,48 @@ textarea {
     width: 100%;
     height: 100vh;
     overflow: hidden;
+  }
+
+  .add-nine-item {
+    width: 100%;
+    height: 100%;
+  }
+
+  .nine-popup-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+  }
+
+  .nine-dots {
+    top: calc(14px + env(safe-area-inset-top));
+    left: calc(14px + env(safe-area-inset-left));
+  }
+
+  .nine-popup-item {
+    width: 100%;
+    height: 100%;
+  }
+
+  .nine-popup-item img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .nine-popup-item span {
+    font-size: 12px;
+  }
+
+  .nine-popup-title {
+    font-size: 18px;
+  }
+
+  .nine-popup {
+    width: 90%;
+    max-width: none;
+  }
+
+  .nine-popup-grid {
+    gap: 8px;
   }
 
   /*-----壁纸------*/
@@ -1290,5 +1577,211 @@ textarea {
     width: 26px;
     height: 26px;
   }
+
+  .nine-dots {
+    top:
+     calc(10px + env(safe-area-inset-top));
+    left:
+     calc(10px + env(safe-area-inset-left));
+  }
+
+  .nine-popup {
+    width: calc(100vw - 20px);
+    width: calc(100dvw - 20px);
+  }
+
+  .nine-popup-item {
+    height: 70px;
+  }
+
+  .add-nine-item {
+    height: 70px;
+  }
+
+  .nine-popup-item img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .nine-popup-item span {
+    font-size: 11px;
+  }
 }
+
+/* =========================
+   九宫格弹窗
+========================= */
+
+.nine-popup {
+  position: fixed;
+
+  top: 50%;
+  left: 50%;
+
+  width: 420px;
+  max-width: calc(100vw - 40px);
+
+  max-height: 70vh;
+
+  padding: 24px;
+
+  box-sizing: border-box;
+
+  overflow-y: auto;
+
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 20px;
+
+  background: rgba(25, 28, 38, 0.88);
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.45);
+
+  z-index: 99998;
+
+  transform: translate(-50%, -50%);
+
+  animation: ninePopupShow 0.18s ease-out;
+}
+
+
+@keyframes ninePopupShow {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.94);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+
+/* 标题 */
+
+.nine-popup-title {
+  margin-bottom: 16px;
+
+  color: rgba(255, 255, 255, 0.9);
+
+  font-size: 16px;
+  font-weight: 500;
+}
+
+
+/* 分组 */
+
+.nine-popup-group + .nine-popup-group {
+  margin-top: 20px;
+}
+
+
+/* 网站网格 */
+
+.nine-popup-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 12px;
+}
+
+
+/* 网站 */
+
+.nine-popup-item {
+  width: 100%;
+  height: 82px;
+
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+
+  background: rgba(255, 255, 255, 0.07);
+
+  color: rgba(255, 255, 255, 0.88);
+
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.nine-popup-item:hover {
+  background: rgba(255, 255, 255, 0.14);
+
+  transform: translateY(-2px);
+}
+
+
+/* 网站图标 */
+
+.nine-popup-item img {
+  width: 32px;
+  height: 32px;
+
+  object-fit: contain;
+
+  border-radius: 7px;
+}
+
+
+/* 网站名称 */
+
+.nine-popup-item span {
+  max-width: 90px;
+
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
+
+  font-size: 12px;
+}
+
+
+/* 添加网站 */
+
+.add-nine-item {
+  padding: 0;
+
+  font-family: inherit;
+}
+
+
+.add-nine-item strong {
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 7px;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  font-size: 22px;
+  font-weight: 300;
+}
+
 </style>
